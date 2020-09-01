@@ -46,7 +46,8 @@ class BillView:
         self.room = Label(self.frame1, text='Room No: '+self.room_no, font=("arial", 16), fg="#000000", bg="sky blue")
         self.room.grid(row=6, column=0, sticky=W)
 
-        self.stay = Label(self.frame1, text='Stay: '+str(data[1])+' to '+str(data[2]), font=("arial", 16), fg="#000000", bg="sky blue")
+        self.stay = Label(self.frame1, text='Stay: '+str(data[1])+' to '+str(data[2]), font=("arial", 16),
+                          fg="#000000", bg="sky blue")
         self.stay.grid(row=7, column=0, sticky=W)
 
         self.bill_by = Label(self.frame1, text='Bill By: '+user, font=("arial", 16), fg="#000000", bg="sky blue")

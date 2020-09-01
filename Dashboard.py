@@ -12,6 +12,28 @@ from Bill import BillView
 
 
 class Dashboard:
+    """
+                This class works with new booking and display rooms and acts as homepage to system.
+
+                Methods:
+                    date_time()
+                    combo_rooms()
+                    on_room_search()
+                    show_room_tree()
+                    send_room()
+                    show_book_tree()
+                    on_save_click()
+                    on_reset_click()
+                    on_room_change()
+                    on_check_out()
+                    open_login()
+                    open_register()
+                    open_rooms()
+                    open_booking()
+                    exit_handler()
+
+
+                """
     def __init__(self, user):
         self.window = Tk()
         self.window.title("Hotel Management System")
@@ -72,7 +94,7 @@ class Dashboard:
 
         self.label_room = Label(self.frame1, text="Room No", font=("arial", 18, "bold"), fg="#000000", bg="sky blue")
         self.label_room.grid(row=6, column=0, padx=5, pady=5)
-        self.combo_room = ttk.Combobox(self.frame1, width=19, font=("arial", 18))
+        self.combo_room = ttk.Combobox(self.frame1, width=19, font=("arial", 18), state='readonly')
         self.combo_room.grid(row=6, column=1, padx=5, pady=5)
 
         self.combo_rooms()
@@ -94,10 +116,6 @@ class Dashboard:
         self.btn_reset = Button(self.frame1, text="Reset", width=20, font=("arial", 16, "bold"), bg="sky blue",
                                 activebackground="yellow", command=self.on_reset_click)
         self.btn_reset.grid(row=10, column=1, sticky=W + E, padx=5, pady=5)
-
-        # self.btn_update = Button(self.frame1, text="Update", width=20, font=("arial", 16, "bold"), bg="sky blue",
-        #                          activebackground="yellow", command=self.on_update_click)
-        # self.btn_update.grid(row=11, column=0, padx=5, sticky=W + E, pady=5)
 
         # self.btn_back = Button(self.frame1, text="Back", width=20, font=("arial", 16, "bold"), bg="sky blue",
         #                        activebackground="yellow", command=self.on_back_click)
@@ -128,7 +146,7 @@ class Dashboard:
         self.label_search1 = Label(self.frame2, text="Search By", font=("arial", 16, "bold"), fg="#000000",
                                    bg="sky blue")
         self.label_search1.grid(row=1, column=0, padx=5, pady=5)
-        self.combo_search1 = ttk.Combobox(self.frame2, values=['room_status', 'room_description'])
+        self.combo_search1 = ttk.Combobox(self.frame2, values=['room_status', 'room_description'], state='readonly')
         self.combo_search1.grid(row=1, column=1, padx=5, pady=5)
         self.entry_search1 = Entry(self.frame2)
         self.entry_search1.grid(row=1, column=2, padx=5, pady=5)
@@ -196,21 +214,17 @@ class Dashboard:
         data = ret.available_rooms()
         self.combo_room['values'] = data
 
-    def on_room_change(self):
-        room_no = self.entry_room1.get()
-        room_stat = self.combo_change.get()
-        ret = Room()
-        ret.change_status(room_stat, room_no)
-        self.show_room_tree()
-
     def on_room_search(self):
         category = self.combo_search1.get()
         value = self.entry_search1.get()
-        self.room_tree.delete(*self.room_tree.get_children())
-        ret = Room()
-        data = ret.search_rooms(category, value)
-        for i in data:
-            self.room_tree.insert("", "end", text=i[0], values=i)
+        if category == "" or value == "":
+            messagebox.showerror("Error", "Enter all the values for searching")
+        else:
+            self.room_tree.delete(*self.room_tree.get_children())
+            ret = Room()
+            data = ret.search_rooms(category, value)
+            for i in data:
+                self.room_tree.insert("", "end", text=i[0], values=i)
 
     def show_room_tree(self):
         self.room_tree.delete(*self.room_tree.get_children())
@@ -234,6 +248,81 @@ class Dashboard:
         for i in data:
             self.book_tree.insert("", "end", text=i[0], values=i)
 
+    def on_save_click(self):
+        name = self.entry_name.get()
+        phone = self.entry_phone.get()
+        address = self.entry_address.get()
+        email = self.entry_email.get()
+        staying = self.combo_stay.get()
+        room = self.combo_room.get()
+        adults = self.entry_adult.get()
+        children = self.entry_child.get()
+        if not staying.isnumeric() or not adults.isnumeric() or not room.isnumeric():
+            messagebox.showerror("Error", "Enter Number for adults and children and staying days")
+        else:
+            check_in = datetime.now().strftime('%Y/%m/%d')
+            stay = datetime.now() + timedelta(days=int(staying))
+            check_out = '{:%Y/%m/%d}'.format(stay)
+            status = "Occupied"
+
+            save = Booking()
+            stat = Room()
+
+            if name == "" or room == "":
+                messagebox.showerror("Error", "Name and Room No is must")
+
+            else:
+                if save.new_booking(name, phone, address, email, check_in, check_out, room, adults, children):
+                    stat.change_status(status, room)
+                    a = messagebox.showinfo('Success', 'Room Booked successfully')
+                    if a == 'ok':
+                        self.on_reset_click()
+                        self.show_room_tree()
+                        self.show_book_tree()
+                        self.combo_rooms()
+                else:
+                    messagebox.showerror('Booking Failed', 'Please Try Again')
+
+    def on_reset_click(self):
+        self.entry_name.delete(0, END)
+        self.entry_phone.delete(0, END)
+        self.entry_address.delete(0, END)
+        self.entry_email.delete(0, END)
+        self.combo_stay.set("")
+        self.combo_room.set("")
+        self.entry_adult.delete(0, END)
+        self.entry_child.delete(0, END)
+        self.combo_search1.set("")
+        self.entry_search1.delete(0, END)
+        self.entry_room1.delete(0, END)
+        self.combo_change.set("")
+        self.show_room_tree()
+        self.show_book_tree()
+
+    def on_room_change(self):
+        room_no = self.entry_room1.get()
+        room_stat = self.combo_change.get()
+        if room_stat == "":
+            messagebox.showerror("Error", "Select the current room status")
+        else:
+            ret = Room()
+            ret.change_status(room_stat, room_no)
+            self.show_room_tree()
+
+    def on_check_out(self):
+        try:
+            user = self.user[2]
+            check_out = datetime.now().strftime('%Y/%m/%d')
+            selected_item = self.book_tree.selection()[0]
+            self.book_index = self.book_tree.item(selected_item, 'text')
+            book_data = self.book_tree.item(selected_item, 'values')
+            booking_id = book_data[0]
+            up = Booking()
+            up.check_out(check_out, booking_id)
+            BillView(booking_id, user)
+        except IndexError:
+            messagebox.showerror("Check Out Error", "Select the customer from active bookings")
+
     def open_login(self):
         self.window.withdraw()
         self.newwindow = Toplevel(self.window)
@@ -256,59 +345,3 @@ class Dashboard:
         a = messagebox.askyesno("EXIT", "Are you sure you want to exit")
         if a == 1:
             self.window.destroy()
-
-    def on_save_click(self):
-        name = self.entry_name.get()
-        phone = self.entry_phone.get()
-        address = self.entry_address.get()
-        email = self.entry_email.get()
-        staying = self.combo_stay.get()
-        room = self.combo_room.get()
-        adults = int(self.entry_adult.get())
-        children = int(self.entry_child.get())
-        check_in = datetime.now().strftime('%Y/%m/%d')
-        stay = datetime.now() + timedelta(days=int(staying))
-        check_out = '{:%Y/%m/%d}'.format(stay)
-        status = "Occupied"
-
-        save = Booking()
-        stat = Room()
-        if save.new_booking(name, phone, address, email, check_in, check_out, room, adults, children):
-            stat.change_status(status, room)
-            a = messagebox.showinfo('Success', 'Room Booked successfully')
-            if a == 'ok':
-                self.on_reset_click()
-                self.show_room_tree()
-                self.show_book_tree()
-                self.combo_rooms()
-        else:
-            messagebox.showerror('Booking Failed', 'Please Try Again')
-
-    # def on_update_click(self):
-    #     pass
-
-    def on_reset_click(self):
-        self.entry_name.delete(0, END)
-        self.entry_phone.delete(0, END)
-        self.entry_address.delete(0, END)
-        self.entry_email.delete(0, END)
-        self.combo_stay.set("")
-        self.combo_room.set("")
-        self.entry_adult.delete(0, END)
-        self.entry_child.delete(0, END)
-        self.show_room_tree()
-        self.show_book_tree()
-
-    # def on_back_click(self):
-    #     self.window.destroy()
-
-    def on_check_out(self):
-        user = self.user[2]
-        check_out = datetime.now().strftime('%Y/%m/%d')
-        selected_item = self.book_tree.selection()[0]
-        self.book_index = self.book_tree.item(selected_item, 'text')
-        book_data = self.book_tree.item(selected_item, 'values')
-        booking_id = book_data[0]
-        up = Booking()
-        up.check_out(check_out, booking_id)
-        BillView(booking_id, user)
