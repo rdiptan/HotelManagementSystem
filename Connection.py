@@ -12,6 +12,7 @@ class Connection:
                 search_dat()
 
             """
+
     def __init__(self):
         self.my_connection = mysql.connector.connect(
             host='localhost',
@@ -78,6 +79,7 @@ class Staff(Connection):
                 login()
 
             """
+
     def __init__(self):
         super().__init__()
 
@@ -117,6 +119,7 @@ class Room(Connection):
                 delete_rooms()
 
             """
+
     def __init__(self):
         super().__init__()
 
@@ -183,9 +186,9 @@ class Booking(Connection):
                     show_active_booking()
                     check_out()
                     booking_stat()
-                    view_booking()
 
                 """
+
     def __init__(self):
         super().__init__()
 
@@ -203,24 +206,102 @@ class Booking(Connection):
         values = ("Staying",)
         return self.search_data(qry, values)
 
-    def check_out(self, out, id):
+    def check_out(self, out, id_):
         """change check_out date"""
         qry = "UPDATE booking SET check_out=%s where id=%s"
-        values = (out, id)
+        values = (out, id_)
         return self.iud(qry, values)
 
-    def booking_stat(self, id):
+    def booking_stat(self, id_):
         """on checking out of the hotel change status of customer to checked_out"""
         qry = "UPDATE booking SET booking_status='Checked Out' where id=%s"
-        values = (id,)
+        values = (id_,)
         return self.iud(qry, values)
 
-    def view_booking(self):
-        """returns all bookings"""
-        qry = "select cus_name, cus_add, cus_mobile, check_in, check_out, room, room_category, adults, children " \
-              "from booking left join rooms on booking.room=rooms.room_no;"
-        value = self.show_data(qry)
-        return value
+
+class Item(Connection):
+    """
+            This class works with menu for hotel.
+
+            Methods:
+                add_item()
+                show_item()
+                update_item()
+                delete_item()
+                search_item()
+
+            """
+
+    def __init__(self):
+        super().__init__()
+
+    def add_item(self, name, type_, price):
+        """add an item to menu"""
+        qry = "INSERT INTO items (name, type, price) VALUES (%s, %s, %s)"
+        values = (name, type_, price)
+        return self.iud(qry, values)
+
+    def show_items(self):
+        """returns all menu details"""
+        qry = "SELECT * FROM items"
+        res = self.show_data(qry)
+        return res
+
+    def update_item(self, id_, name, type_, price):
+        """update an item detail of menu"""
+        qry = "UPDATE items SET name = %s, type=%s, price =%s WHERE id = %s"
+        values = (name, type_, price, id_)
+        return self.iud(qry, values)
+
+    def delete_item(self, id_):
+        """delete an item from menu"""
+        qry = "DELETE FROM items WHERE id = %s"
+        values = (id_,)
+        return self.iud(qry, values)
+
+    def search_item(self, search):
+        """search in menu"""
+        qry = "SELECT * FROM items WHERE name LIKE %s OR type LIKE %s OR price LIKE %s"
+        values = ("%" + search + "%", "%" + search + "%", "%" + search + "%")
+        res = self.search_data(qry, values)
+        return res
+
+
+class Order(Connection):
+    """
+            This class works with order of customer in hotel.
+
+            Methods:
+                add_order()
+                show_order()
+                delete_order()
+
+            """
+
+    def __init__(self):
+        super().__init__()
+
+    def add_order(self, ordered_item_list, cus_id):
+        """save orders"""
+        for i in ordered_item_list:
+            qry = "INSERT INTO orders (item_id, cus_id, qty) VALUES (%s, %s, %s)"
+            val = (i[0], cus_id, i[1])
+            self.iud(qry, val)
+
+    def show_orders(self, cus_id):
+        """displays all orders made by a customer"""
+        qry = """SELECT orders.id, items.type, items.name, orders.qty FROM orders
+        JOIN items ON orders.item_id = items.id JOIN booking ON booking.id = orders.cus_id 
+        where cus_id = %s order by id desc"""
+        values = (cus_id,)
+        res = self.search_data(qry, values)
+        return res
+
+    def delete_order(self, order_id):
+        """delete a specific order"""
+        qry = "DELETE FROM orders WHERE id = %s"
+        values = (order_id,)
+        return self.iud(qry, values)
 
 
 class Bill(Connection):
@@ -230,16 +311,20 @@ class Bill(Connection):
                 Methods:
                     save_payment()
                     room_bill()
+                    order_bill()
+                    total_order()
                     view_bill()
 
                 """
+
     def __init__(self):
         super().__init__()
 
-    def save_payment(self, booking_id, discount, amount, paid):
+    def save_payment(self, booking_id, discount, amount, paid, billed_by):
         """save billing details"""
-        qry = "insert into payment (booking_id, discount, paid_amount, payment_type) values (%s, %s, %s, %s)"
-        values = (booking_id, discount, amount, paid)
+        qry = "insert into payment (booking_id, discount, paid_amount, payment_type, billed_by)" \
+              " values (%s, %s, %s, %s, %s)"
+        values = (booking_id, discount, amount, paid, billed_by)
         return self.iud(qry, values)
 
     def room_bill(self, booking_id):
@@ -249,9 +334,22 @@ class Bill(Connection):
         values = (booking_id,)
         return self.search_data(qry, values)
 
+    def order_bill(self, cus_id):
+        """returns all the orders made by customer"""
+        qry = "select concat(type,' ',name), price, qty, price*qty " \
+              "from items join orders on orders.item_id = items.id where cus_id = %s;"
+        values = (cus_id,)
+        return self.search_data(qry, values)
+
+    def total_order(self, cus_id):
+        """returns the total orders bill"""
+        qry = "select sum(price*qty) from items join orders on orders.item_id = items.id where cus_id = %s;"
+        values = (cus_id,)
+        return self.search_data(qry, values)
+
     def view_bill(self):
         """returns all the paid bills"""
-        qry = "select cus_name, cus_add, cus_mobile, paid_amount, discount, payment_type, check_in, check_out, room " \
-              "from payment join booking on payment.booking_id = booking.id;"
+        qry = """select cus_name, cus_add, cus_mobile, paid_amount, discount, payment_type, check_in, check_out,
+         room, adults, children from payment join booking on payment.booking_id = booking.id"""
         value = self.show_data(qry)
         return value

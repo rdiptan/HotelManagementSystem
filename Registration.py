@@ -13,6 +13,7 @@ class Register:
             on_reset_click()
             on_back_click()
             search_user()
+            quick_sort()
             binary_search()
 
         """
@@ -20,6 +21,10 @@ class Register:
         self.window = window
         self.window.geometry("1366x768+0+0")
         self.window.configure(bg="sky blue")
+
+        self.bg_reg = PhotoImage(file="Pictures/reg.png")
+        self.bg_reset = PhotoImage(file="Pictures/reset.png")
+        self.bg_back = PhotoImage(file="Pictures/back.png")
 
         # label frame
         self.frame = LabelFrame(self.window, bg="sky blue", fg="white", text="User Register",
@@ -96,17 +101,18 @@ class Register:
 
         # register button
         self.btn_reg = Button(self.frame, text="Register", width=20, font=("arial", 16, "bold"), bg="sky blue",
-                              activebackground="blue", command=self.on_register_click)
+                              activebackground="blue", command=self.on_register_click, image=self.bg_reg, compound=LEFT)
         self.btn_reg.grid(row=10, column=0, columnspan=2, sticky=W + E, padx=5, pady=5)
 
         # reset button
         self.btn_reset = Button(self.frame, text="Reset", width=20, font=("arial", 16, "bold"), bg="sky blue",
-                                activebackground="yellow", command=self.on_reset_click)
+                                activebackground="yellow", command=self.on_reset_click, image=self.bg_reset,
+                                compound=LEFT)
         self.btn_reset.grid(row=11, column=0, sticky=W + E, padx=5, pady=5)
 
         # back button
         self.btn_back = Button(self.frame, text="Back", width=20, font=("arial", 16, "bold"), bg="sky blue",
-                               activebackground="yellow", command=self.on_back_click)
+                               activebackground="yellow", command=self.on_back_click, image=self.bg_back, compound=LEFT)
         self.btn_back.grid(row=11, column=1, padx=5, sticky=W + E, pady=5)
 
     def on_register_click(self):
@@ -172,21 +178,42 @@ class Register:
         """checks for username is already present or not"""
         reg = Staff()
         data = reg.check_username()
-        result = (self.binary_search(data, username))
+        records = self.quick_sort(data)
+        result = self.binary_search(records, username)
         if result != -1:
             return True
         else:
             return False
 
-    def binary_search(self, list, key):
+    def quick_sort(self, my_list):
+        """Algorithm to sort the list of generated array for searching"""
+        less = []
+        equal = []
+        greater = []
+
+        if len(my_list) > 1:
+            pivot = my_list[0]
+            for x in my_list:
+                if x < pivot:
+                    less.append(x)
+                elif x == pivot:
+                    equal.append(x)
+                elif x > pivot:
+                    greater.append(x)
+            return self.quick_sort(less) + equal + self.quick_sort(greater)
+
+        else:
+            return my_list
+
+    def binary_search(self, my_list, key):
         """binary search algorithm"""
         start = 0
-        end = len(list) - 1
+        end = len(my_list) - 1
         while start <= end:
             mid = (start + end) // 2
-            if list[mid][0] == key:
+            if my_list[mid][0] == key:
                 return mid
-            elif list[mid][0] > key:
+            elif my_list[mid][0] > key:
                 end = mid - 1
             else:
                 start = mid + 1

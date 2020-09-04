@@ -1,11 +1,11 @@
-def binary_search(list, key):
+def binary_search(my_list, key):
     start = 0
-    end = len(list) - 1
+    end = len(my_list) - 1
     while start <= end:
         mid = (start + end) // 2
-        if list[mid][0] == key:
+        if my_list[mid][0] == key:
             return mid
-        elif list[mid][0] > key:
+        elif my_list[mid][0] > key:
             end = mid - 1
         else:
             start = mid + 1
@@ -14,9 +14,6 @@ def binary_search(list, key):
 
 def find_user():
     data = [('admin',), ('ball',), ('user123',), ('xoxo',), ('zebra',)]
-    # my_data = []
-    # for i in data:
-    #     my_data.append(i[0])
     result = (binary_search(data, 'xoxo'))
     if result != -1:
         print("Element is present at index", str(result))
@@ -27,24 +24,38 @@ def find_user():
 find_user()
 
 
-# def binary_search_iterative(item_list, item):
-#     first = 0
-#     last = len(item_list) - 1
-#     found = False
-#     while first <= last and not found:
-#         mid = (first + last) // 2
-#         if item_list[mid] == item:
-#             found = True
-#         else:
-#             if item < item_list[mid]:
-#                 last = mid - 1
-#             else:
-#                 first = mid + 1
-#     return found
-#
-#
-# result = binary_search_iterative([1, 2, 3, 5, 8], 5)
-# if result:
-#     print("Element is present at list")
-# else:
-#     print("Element is not present in list")
+def quick_sort(my_list):
+    less = []
+    equal = []
+    greater = []
+
+    if len(my_list) > 1:
+        pivot = my_list[0]
+        for x in my_list:
+            if x < pivot:
+                less.append(x)
+            elif x == pivot:
+                equal.append(x)
+            elif x > pivot:
+                greater.append(x)
+        return quick_sort(less) + equal + quick_sort(greater)
+
+    else:
+        return my_list
+
+
+def insertion_sort(list):
+    for i in range(1, len(list)):
+        temp = list[i]
+        j = i - 1
+        while j >= 0 and temp < list[j]:
+            list[j + 1] = list[j]
+            j = j - 1
+        list[j + 1] = temp
+    return list
+
+
+data = [('x',), ('ww',), ('aaa',), ('dbi7',), ('zebra',), ('1',)]
+print(quick_sort(data))
+print(insertion_sort(data))
+

@@ -18,7 +18,7 @@ class Login:
     def __init__(self, window):
         self.window = window
         self.window.title("Hotel Management System")
-        self.window.geometry("600x300+450+200")
+        self.window.geometry("600x300+400+200")
 
         self.window.configure(bg="sky blue")
 
@@ -29,13 +29,16 @@ class Login:
 
         # images
         canvas = Canvas()
-        self.bg_entry = PhotoImage(file="hotel2.png")
+        self.bg_entry = PhotoImage(file="Pictures/hotel2.png")
         new_image = self.bg_entry.subsample(5, 10)
         canvas.create_image(0, 0, image=new_image, anchor="nw")
         self.canvas_image = new_image
 
-        self.bg_uname = PhotoImage(file="u25.png")
-        self.bg_pass = PhotoImage(file="p25.png")
+        self.bg_uname = PhotoImage(file="Pictures/uname.png")
+        self.bg_pass = PhotoImage(file="Pictures/password.png")
+        self.bg_log = PhotoImage(file="Pictures/logout.png")
+        self.bg_reset = PhotoImage(file="Pictures/reset.png")
+        self.bg_exit = PhotoImage(file="Pictures/exit.png")
 
         # title
         self.title0 = Label(self.window, text="Please Login", image=self.canvas_image, compound=LEFT,
@@ -47,7 +50,7 @@ class Login:
         self.frame_login.pack()
 
         # user name
-        self.label_un = Label(self.frame_login, text="Username", image=self.bg_uname, compound=LEFT,
+        self.label_un = Label(self.frame_login, text=" Username", image=self.bg_uname, compound=LEFT,
                               font=("arial", 18, "bold"), fg="#000000", bg="sky blue")
         self.label_un.grid(row=0, column=0, padx=5, pady=5)
         self.entry_un = Entry(self.frame_login, font=("arial", 18), textvariable=self.un)
@@ -55,7 +58,7 @@ class Login:
         self.entry_un.focus()
 
         # password
-        self.label_pw = Label(self.frame_login, text="Password", image=self.bg_pass, compound=LEFT,
+        self.label_pw = Label(self.frame_login, text=" Password", image=self.bg_pass, compound=LEFT,
                               font=("arial", 18, "bold"), fg="#000000", bg="sky blue")
         self.label_pw.grid(row=1, column=0, padx=5, pady=5)
         self.entry_pw = Entry(self.frame_login, font=("arial", 18), textvariable=self.pw)
@@ -66,21 +69,22 @@ class Login:
         # checkbutton for password view
         self.check = IntVar()
         self.pa = Checkbutton(self.frame_login, bg="#ffffff", variable=self.check, command=self.show)
-        self.pa.place(x=520, y=55)
+        self.pa.place(x=400, y=55)
 
         # login button
         self.btn_login = Button(self.frame_login, text="Log In", width=20, font=("arial", 16, "bold"), bg="sky blue",
-                                activebackground="blue", command=self.on_login_click)
+                                activebackground="blue", command=self.on_login_click, image=self.bg_log, compound=LEFT)
         self.btn_login.grid(row=2, column=0, columnspan=2, sticky=W + E, padx=5, pady=5)
 
         # reset button
         self.btn_reset = Button(self.frame_login, text="Reset", width=20, font=("arial", 16, "bold"), bg="sky blue",
-                                activebackground="yellow", command=self.on_reset_click)
+                                activebackground="yellow", command=self.on_reset_click, image=self.bg_reset,
+                                compound=LEFT)
         self.btn_reset.grid(row=3, column=0, sticky=W + E, padx=5, pady=5)
 
         # quit button
         self.btn_exit = Button(self.frame_login, text="Exit", width=20, font=("arial", 16, "bold"), bg="sky blue",
-                               activebackground="red", command=self.window.withdraw)
+                               activebackground="red", command=self.window.withdraw, image=self.bg_exit, compound=LEFT)
         self.btn_exit.grid(row=3, column=1, sticky=W + E, padx=5, pady=5)
 
         # disclaimer
