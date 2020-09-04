@@ -314,6 +314,9 @@ class Bill(Connection):
                     order_bill()
                     total_order()
                     view_bill()
+                    search_by_date()
+                    search_by_date_sum()
+                    search()
 
                 """
 
@@ -353,3 +356,28 @@ class Bill(Connection):
          room, adults, children from payment join booking on payment.booking_id = booking.id"""
         value = self.show_data(qry)
         return value
+
+    def search_by_date(self, a, b):
+        """returns all the paid bills of selected date period"""
+        qry = """select cus_name, cus_add, cus_mobile, paid_amount, discount, payment_type, check_in, check_out,
+                 room, adults, children from payment join booking on payment.booking_id = booking.id
+                 where check_out between %s and %s"""
+        values = (a, b)
+        return self.search_data(qry, values)
+
+    def search_by_date_sum(self, a, b):
+        """returns all the paid bills of selected date period"""
+        qry = """select sum(paid_amount) from payment join booking on payment.booking_id = booking.id
+                 where check_out between %s and %s"""
+        values = (a, b)
+        return self.search_data(qry, values)
+
+    def search(self, search):
+        """search in payments"""
+        qry = """select cus_name, cus_add, cus_mobile, paid_amount, discount, payment_type, 
+        check_in, check_out, room, adults, children 
+        from payment join booking on payment.booking_id = booking.id 
+        where cus_name like %s or cus_add like %s or payment_type like %s"""
+        values = ("%" + search + "%", "%" + search + "%", "%" + search + "%")
+        res = self.search_data(qry, values)
+        return res
