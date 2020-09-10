@@ -286,7 +286,7 @@ class Order(Connection):
         for i in ordered_item_list:
             qry = "INSERT INTO orders (item_id, cus_id, qty) VALUES (%s, %s, %s)"
             val = (i[0], cus_id, i[1])
-            self.iud(qry, val)
+            return self.iud(qry, val)
 
     def show_orders(self, cus_id):
         """displays all orders made by a customer"""

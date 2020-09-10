@@ -21,10 +21,10 @@ class OrderView:
             """
 
     def __init__(self, cus_id, cus_name, cus_room):
-        self.window = Toplevel()
-        self.window.title("Hotel Management System")
-        self.window.geometry("1366x768+0+0")
-        self.window.configure(bg="sky blue")
+        self.win_order = Toplevel()
+        self.win_order.title("Hotel Management System")
+        self.win_order.geometry("1366x768+0+0")
+        self.win_order.configure(bg="sky blue")
 
         self.bg_search = PhotoImage(file="Pictures/search.png")
         self.bg_save = PhotoImage(file="Pictures/save.png")
@@ -38,7 +38,7 @@ class OrderView:
         self.cus_name = cus_name
         self.cus_room = cus_room
 
-        self.frame2 = Frame(self.window, bg="sky blue")
+        self.frame2 = Frame(self.win_order, bg="sky blue")
         self.frame2.pack()
 
         self.label_name = Label(self.frame2, text=("Guest Name: " + cus_name), font=("arial", 16),
@@ -125,12 +125,12 @@ class OrderView:
         self.btn_del.grid(row=7, column=2, sticky=W + E, padx=5, pady=5)
 
         self.btn_back = Button(self.frame2, text="Back", width=20, font=("arial", 16), activebackground="yellow",
-                               bg="sky blue", command=self.window.destroy, image=self.bg_back, compound=LEFT)
+                               bg="sky blue", command=self.win_order.destroy, image=self.bg_back, compound=LEFT)
         self.btn_back.grid(row=8, column=1, sticky=W + E, padx=5, pady=5)
 
         self.show_item_tree()
 
-        self.window.mainloop()
+        self.win_order.mainloop()
 
     def add_items_in_list(self):
         """take order from customer"""
@@ -139,18 +139,18 @@ class OrderView:
             food_data = self.item_tree.item(selected_item, 'values')
             qty = self.entry_qty.get()
             if qty == "" or not qty.isnumeric():
-                messagebox.showerror("Error", "Please enter a value for quantity")
+                messagebox.showerror("Error", "Please enter a value for quantity", parent=self.win_order)
             else:
                 self.ordered_item_list.append((food_data[0], qty))
                 self.order_tree.insert('', 'end', text='', value=('', food_data[1], food_data[2], qty))
         except IndexError:
-            messagebox.showerror("Error", "Select food from menu")
+            messagebox.showerror("Error", "Select food from menu", parent=self.win_order)
 
     def submit_order(self):
         """save ordered foods in database"""
         order = Order()
-        order.add_order(self.ordered_item_list, self.cus_id)
-        messagebox.showinfo("Order", "Order Added")
+        if order.add_order(self.ordered_item_list, self.cus_id):
+            messagebox.showinfo("Order", "Order Added", parent=self.win_order)
         self.reset_tree_view()
         self.show_orders()
 
@@ -198,4 +198,4 @@ class OrderView:
             up.delete_order(order_id)
             self.show_orders()
         except IndexError:
-            messagebox.showerror("Error", "Select food from menu")
+            messagebox.showerror("Error", "Select food from orders", parent=self.win_order)

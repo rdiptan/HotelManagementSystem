@@ -18,10 +18,10 @@ class BillView:
 
             """
     def __init__(self, cus_id, user):
-        self.window = Toplevel()
-        self.window.title("Hotel Management System")
-        self.window.geometry("1366x768+0+0")
-        self.window.configure(bg="sky blue")
+        self.win_bill = Toplevel()
+        self.win_bill.title("Hotel Management System")
+        self.win_bill.geometry("1366x768+0+0")
+        self.win_bill.configure(bg="sky blue")
 
         self.bg_pay = PhotoImage(file="Pictures/money.png")
         self.bg_gen = PhotoImage(file="Pictures/generate.png")
@@ -53,7 +53,7 @@ class BillView:
             total_bill = self.tot
 
         # bill ui
-        self.frame1 = Frame(self.window, bg="sky blue")
+        self.frame1 = Frame(self.win_bill, bg="sky blue")
         self.frame1.place(x=350)
 
         self.hotel = Label(self.frame1, text='### Hotel Pvt.Ltd.', font=("arial", 20, "bold"), fg="navy blue",
@@ -140,14 +140,14 @@ class BillView:
 
         self.order_bill()
 
-        self.window.mainloop()
+        self.win_bill.mainloop()
 
     def on_gen_click(self):
         """apply discount to total amount"""
         amt = total_bill
         dis = self.entry_discount.get()
         if dis == "" or not dis.isnumeric():
-            messagebox.showerror("Error", "Please enter a value for discount")
+            messagebox.showerror("Error", "Please enter a value for discount", parent=self.win_bill)
         total = amt - ((int(dis)/100)*amt)
         self.grand_total['text'] = total
 
@@ -174,19 +174,19 @@ class BillView:
         status = "Cleaning"
         if paid_amount == "":
             messagebox.showerror('Payment Failed', 'Please add a discount value and press generate button\n'
-                                                   'if no discount is given enter 0')
+                                                   'if no discount is given enter 0', parent=self.win_bill)
         elif payment_type == "":
-            messagebox.showerror('Payment Failed', 'Please select payment mode')
+            messagebox.showerror('Payment Failed', 'Please select payment mode', parent=self.win_bill)
         else:
             room = self.room_no
             save = Bill()
             if save.save_payment(booking_id, discount, paid_amount, payment_type, billed_by):
-                a = messagebox.showinfo('Success', 'Bill Paid successfully')
+                a = messagebox.showinfo('Success', 'Bill Paid successfully', parent=self.win_bill)
                 up = Booking()
                 up.booking_stat(booking_id)
                 stat = Room()
                 stat.change_status(status, room)
                 if a == 'ok':
-                    self.window.destroy()
+                    self.win_bill.destroy()
             else:
-                messagebox.showerror('Payment Failed', 'Please Try Again')
+                messagebox.showerror('Payment Failed', 'Please Try Again', parent=self.win_bill)
