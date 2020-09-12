@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
+import sys
 from Connection import Staff
 from Dashboard import Dashboard
 
@@ -12,17 +13,18 @@ class Login:
             on_login_click()
             on_reset_lick()
             show()
+            exit_handler()
 
         """
 
     def __init__(self, window):
-        self.window = window
-        self.window.title("Hotel Management System")
-        self.window.geometry("600x300+400+200")
+        self.root = window
+        self.root.title("Hotel Management System")
+        self.root.geometry("600x300+400+200")
 
-        self.window.configure(bg="sky blue")
+        self.root.configure(bg="sky blue")
 
-        self.window.resizable(0, 0)
+        self.root.resizable(0, 0)
 
         self.un = StringVar()
         self.pw = StringVar()
@@ -41,12 +43,12 @@ class Login:
         self.bg_exit = PhotoImage(file="Pictures/exit.png")
 
         # title
-        self.title0 = Label(self.window, text="Please Login", image=self.canvas_image, compound=LEFT,
+        self.title0 = Label(self.root, text="Please Login", image=self.canvas_image, compound=LEFT,
                             font=('Arial', 24, 'bold'), bg="sky blue")
         self.title0.pack(pady=10)
 
         # frame
-        self.frame_login = Frame(self.window, bg="sky blue")
+        self.frame_login = Frame(self.root, bg="sky blue")
         self.frame_login.pack()
 
         # user name
@@ -84,17 +86,17 @@ class Login:
 
         # quit button
         self.btn_exit = Button(self.frame_login, text="Exit", width=20, font=("arial", 16, "bold"), bg="sky blue",
-                               activebackground="red", command=self.window.withdraw, image=self.bg_exit, compound=LEFT)
+                               activebackground="red", command=self.exit_handler, image=self.bg_exit, compound=LEFT)
         self.btn_exit.grid(row=3, column=1, sticky=W + E, padx=5, pady=5)
 
         # disclaimer
-        self.title1 = Label(self.window, text="You are accessing the portal of ### Hotel Pvt. Ltd.\n "
-                                              "Any misuse will be against hotel law. And addressed as Federal crime.",
+        self.title1 = Label(self.root, text="You are accessing the portal of ### Hotel Pvt. Ltd.\n "
+                                            "Any misuse will be against hotel law. And addressed as Federal crime.",
                             font=("arial", 8, "bold"), fg="#000000", bg="sky blue")
         self.title1.pack(side=BOTTOM)
 
         # separation line
-        self.line = Canvas(self.window, width=500, height=2, bg="#ffffff").pack(side=BOTTOM)
+        self.line = Canvas(self.root, width=500, height=2, bg="#ffffff").pack(side=BOTTOM)
 
     def on_login_click(self):
         """check for if input fields are empty or not then verify the user id and password
@@ -107,7 +109,7 @@ class Login:
         else:
             usr = valid.login(username, password)
             if len(usr) > 0:
-                self.window.destroy()
+                self.root.destroy()
                 Dashboard(usr[0])
             else:
                 messagebox.showerror('Error', 'Wrong id or password')
@@ -123,6 +125,13 @@ class Login:
             self.entry_pw["show"] = "*"
         else:
             self.entry_pw["show"] = ""
+
+    def exit_handler(self):
+        """quits the application"""
+        a = messagebox.askyesno("EXIT", "Are you sure you want to exit")
+        if a == 1:
+            self.root.destroy()
+            sys.exit()
 
 
 def main():

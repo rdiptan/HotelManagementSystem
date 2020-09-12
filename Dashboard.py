@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 import time
 from datetime import datetime, timedelta
+import sys
 from Registration import Register
 from Rooms import Rooms
 from Bookings import Bookings
@@ -252,7 +253,9 @@ class Dashboard:
         today = '{:%B %d, %Y}'.format(d)
         my_time = time.strftime('%I:%M:%S %p')
         self.lblInfo.config(text=('Time: ' + my_time + '     Date: ' + today))
-        self.lblInfo.after(200, self.date_time)
+        global clock
+        # refreshes the function
+        clock = self.lblInfo.after(200, self.date_time)
 
     def combo_rooms(self):
         """returns available rooms to combobox"""
@@ -362,6 +365,7 @@ class Dashboard:
             ret = Room()
             ret.change_status(room_stat, room_no)
             self.show_room_tree()
+            self.combo_rooms()
 
     def on_order(self):
         """opens the order page for selected customer"""
@@ -391,10 +395,10 @@ class Dashboard:
 
     def open_login(self):
         """open login page"""
-        self.window.withdraw()
-        self.newwindow = Toplevel(self.window)
-        from Login import Login
-        Login(self.newwindow)
+        self.window.destroy()
+        from Login import main
+        self.lblInfo.after_cancel(clock)  # stops the clock
+        main()
 
     def open_register(self):
         """open user registration page"""
@@ -421,3 +425,4 @@ class Dashboard:
         a = messagebox.askyesno("EXIT", "Are you sure you want to exit")
         if a == 1:
             self.window.destroy()
+            sys.exit()
