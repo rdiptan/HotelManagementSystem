@@ -17,6 +17,7 @@ class BillView:
                 on_pay_click()
 
             """
+
     def __init__(self, cus_id, user):
         self.win_bill = Toplevel()
         self.win_bill.title("Hotel Management System")
@@ -37,8 +38,8 @@ class BillView:
 
         # calculate hotel stay days from checked in and checking out date
         self.room_no = data[3]
-        self.days = abs(data[1]-data[2]).days
-        self.tot = float(data[4])*int(self.days)
+        self.days = abs(data[1] - data[2]).days
+        self.tot = float(data[4]) * int(self.days)
 
         # calculating amount owe to hotel
         global total
@@ -69,17 +70,17 @@ class BillView:
 
         self.line = Canvas(self.frame1, width=500, height=2, bg="navy blue").grid(row=3)
 
-        self.name = Label(self.frame1, text='Name: '+data[0], font=("arial", 16), fg="#000000", bg="sky blue")
+        self.name = Label(self.frame1, text='Name: ' + data[0], font=("arial", 16), fg="#000000", bg="sky blue")
         self.name.grid(row=5, column=0, sticky=W)
 
-        self.room = Label(self.frame1, text='Room No: '+self.room_no, font=("arial", 16), fg="#000000", bg="sky blue")
+        self.room = Label(self.frame1, text='Room No: ' + self.room_no, font=("arial", 16), fg="#000000", bg="sky blue")
         self.room.grid(row=6, column=0, sticky=W)
 
-        self.stay = Label(self.frame1, text='Stay: '+str(data[1])+' to '+str(data[2]), font=("arial", 16),
+        self.stay = Label(self.frame1, text='Stay: ' + str(data[1]) + ' to ' + str(data[2]), font=("arial", 16),
                           fg="#000000", bg="sky blue")
         self.stay.grid(row=7, column=0, sticky=W)
 
-        self.bill_by = Label(self.frame1, text='Bill By: '+user, font=("arial", 16), fg="#000000", bg="sky blue")
+        self.bill_by = Label(self.frame1, text='Bill By: ' + user, font=("arial", 16), fg="#000000", bg="sky blue")
         self.bill_by.grid(row=8, column=0, sticky=W)
 
         self.bill_tree = ttk.Treeview(self.frame1, columns=('name', 'price', 'qty', 'amt'))
@@ -100,12 +101,12 @@ class BillView:
         self.bill_tree.insert("", "end", text="", values=("Room Bill", data[4], self.days, self.tot))
 
         self.total = Label(self.frame1, text='Total Amount', font=("arial", 16), fg="#000000", bg="sky blue")
-        self.total.grid(row=11, column=0, sticky=E+W)
+        self.total.grid(row=11, column=0, sticky=E + W)
         self.total_amt = Label(self.frame1, text=total_bill, font=("arial", 16), fg="#000000", bg="sky blue")
         self.total_amt.grid(row=11, column=0, sticky=E)
 
         self.discount = Label(self.frame1, text='Discount %', font=("arial", 16), fg="#000000", bg="sky blue")
-        self.discount.grid(row=12, column=0, sticky=E+W)
+        self.discount.grid(row=12, column=0, sticky=E + W)
         self.entry_discount = Entry(self.frame1, font=("arial", 16), width=13)
         self.entry_discount.grid(row=12, column=0, sticky=E)
         self.btn_generate = Button(self.frame1, text="Generate", font=("arial", 16, "bold"), bg="sky blue",
@@ -113,30 +114,32 @@ class BillView:
         self.btn_generate.grid(row=13, column=0, sticky=E)
 
         self.lbl_grand_total = Label(self.frame1, text='Grand Total', font=("arial", 16), fg="#000000", bg="sky blue")
-        self.lbl_grand_total.grid(row=14, column=0, sticky=E+W)
+        self.lbl_grand_total.grid(row=14, column=0, sticky=E + W)
         self.grand_total = Label(self.frame1, font=("arial", 16), fg="#000000", bg="sky blue")
         self.grand_total.grid(row=14, column=0, sticky=E)
+        self.grand_total['text'] = total_bill
 
         self.payment = Label(self.frame1, text='Payment Mode', font=("arial", 16), fg="#000000", bg="sky blue")
-        self.payment.grid(row=15, column=0, sticky=E+W)
+        self.payment.grid(row=15, column=0, sticky=E + W)
         self.combo_pay = ttk.Combobox(self.frame1, values=['Cash', 'Card', 'Cheque', 'Online'], width=12,
                                       font=("arial", 16))
+        self.combo_pay.bind("<<ComboboxSelected>>", self.calculator)
         self.combo_pay.grid(row=15, column=0, sticky=E)
 
-        self.tender = Label(self.frame1, text='Tender', font=("arial", 16), fg="#000000", bg="sky blue")
-        self.tender.grid(row=16, column=0, sticky=E+W)
-        self.entry_tend = Entry(self.frame1, font=("arial", 16), width=13)
-        self.entry_tend.grid(row=16, column=0, sticky=E)
-
-        self.ret = Button(self.frame1, text='Return', font=("arial", 16, "bold"), bg="sky blue",
-                          activeforeground="blue", command=self.on_return_click, image=self.bg_calc, compound=LEFT)
-        self.ret.grid(row=17, column=0)
-        self.ret_amt = Label(self.frame1, font=("arial", 16), fg="#000000", bg="sky blue")
-        self.ret_amt.grid(row=17, column=0, sticky=E)
+        # self.tender = Label(self.frame1, text='Tender', font=("arial", 16), fg="#000000", bg="sky blue")
+        # self.tender.grid(row=16, column=0, sticky=E + W)
+        # self.entry_tend = Entry(self.frame1, font=("arial", 16), width=13)
+        # self.entry_tend.grid(row=16, column=0, sticky=E)
+        #
+        # self.ret = Button(self.frame1, text='Return', font=("arial", 16, "bold"), bg="sky blue",
+        #                   activeforeground="blue", command=self.on_return_click, image=self.bg_calc, compound=LEFT)
+        # self.ret.grid(row=17, column=0)
+        # self.ret_amt = Label(self.frame1, font=("arial", 16), fg="#000000", bg="sky blue")
+        # self.ret_amt.grid(row=17, column=0, sticky=E)
 
         self.btn_pay = Button(self.frame1, text="PAY", width=20, font=("arial", 16, "bold"), bg="sky blue",
                               activebackground="blue", command=self.on_pay_click, image=self.bg_pay, compound=LEFT)
-        self.btn_pay.grid(row=18, column=0, sticky=W+E, padx=5, pady=5)
+        self.btn_pay.grid(row=18, column=0, sticky=W + E, padx=5, pady=5)
 
         self.order_bill()
 
@@ -144,18 +147,42 @@ class BillView:
 
     def on_gen_click(self):
         """apply discount to total amount"""
-        amt = total_bill
-        dis = self.entry_discount.get()
-        if dis == "" or not dis.isnumeric():
+        try:
+            dis = float(self.entry_discount.get())
+            if dis < 0 or dis > 100:
+                messagebox.showerror('Payment Failed', 'Wrong Discount value', parent=self.win_bill)
+                self.entry_discount.delete(0, END)
+                self.grand_total['text'] = total_bill
+            else:
+                total = total_bill - ((dis / 100) * total_bill)
+                self.grand_total['text'] = round(total)
+        except ValueError:
             messagebox.showerror("Error", "Please enter a value for discount", parent=self.win_bill)
-        total = amt - ((int(dis)/100)*amt)
-        self.grand_total['text'] = total
+
+    def calculator(self, event):
+        if self.combo_pay.get() == "Cash":
+            self.tender = Label(self.frame1, text='Tender', font=("arial", 16), fg="#000000", bg="sky blue")
+            self.tender.grid(row=16, column=0, sticky=E + W)
+            self.entry_tend = Entry(self.frame1, font=("arial", 16), width=13)
+            self.entry_tend.grid(row=16, column=0, sticky=E)
+
+            self.ret = Button(self.frame1, text='Return', font=("arial", 16, "bold"), bg="sky blue",
+                              activeforeground="blue", command=self.on_return_click, image=self.bg_calc, compound=LEFT)
+            self.ret.grid(row=17, column=0)
+            self.ret_amt = Label(self.frame1, font=("arial", 16), fg="#000000", bg="sky blue")
+            self.ret_amt.grid(row=17, column=0, sticky=E)
 
     def on_return_click(self):
         """calculate returns change amount - works as calculator"""
-        ten = int(self.entry_tend.get())
-        change = ten-float(self.grand_total.cget("text"))
-        self.ret_amt['text'] = change
+        try:
+            tend = float(self.entry_tend.get())
+            change = tend - float(self.grand_total.cget("text"))
+            if tend < float(self.grand_total.cget("text")):
+                messagebox.showerror('Less Cash', 'Rs.' + str(abs(change)) + ' needs more.', parent=self.win_bill)
+            else:
+                self.ret_amt['text'] = change
+        except ValueError:
+            messagebox.showerror("Wrong Value", "Enter the correct amount for change")
 
     def order_bill(self):
         """show bills details in treeview"""
@@ -172,10 +199,7 @@ class BillView:
         payment_type = self.combo_pay.get()
         billed_by = self.user
         status = "Cleaning"
-        if paid_amount == "":
-            messagebox.showerror('Payment Failed', 'Please add a discount value and press generate button\n'
-                                                   'if no discount is given enter 0', parent=self.win_bill)
-        elif payment_type == "":
+        if payment_type == "":
             messagebox.showerror('Payment Failed', 'Please select payment mode', parent=self.win_bill)
         else:
             room = self.room_no
