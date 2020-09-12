@@ -12,7 +12,7 @@ class Login:
         Methods:
             on_login_click()
             on_reset_lick()
-            show()
+            show_password()
             exit_handler()
 
         """
@@ -22,7 +22,7 @@ class Login:
         self.root.title("Hotel Management System")
         self.root.geometry("600x300+400+200")
 
-        self.root.configure(bg="sky blue")
+        self.root.configure(bg="#2196F3")
 
         self.root.resizable(0, 0)
 
@@ -41,62 +41,62 @@ class Login:
         self.bg_log = PhotoImage(file="Pictures/logout.png")
         self.bg_reset = PhotoImage(file="Pictures/reset.png")
         self.bg_exit = PhotoImage(file="Pictures/exit.png")
+        self.bg_show = PhotoImage(file="Pictures/open.png")
+        self.bg_hide = PhotoImage(file="Pictures/close.png")
+        self.show_state = False
 
         # title
-        self.title0 = Label(self.root, text="Please Login", image=self.canvas_image, compound=LEFT,
-                            font=('Arial', 24, 'bold'), bg="sky blue")
+        self.title0 = Label(self.root, text="PLEASE LOGIN", image=self.canvas_image, compound=LEFT,
+                            font=('Comic Sans MS', 36, 'bold'), fg="#000000",  bg="#2196F3")
         self.title0.pack(pady=10)
 
         # frame
-        self.frame_login = Frame(self.root, bg="sky blue")
+        self.frame_login = Frame(self.root, bg="#2196F3")
         self.frame_login.pack()
 
         # user name
-        self.label_un = Label(self.frame_login, text=" Username", image=self.bg_uname, compound=LEFT,
-                              font=("arial", 18, "bold"), fg="#000000", bg="sky blue")
+        self.label_un = Label(self.frame_login, text=" USERNAME", image=self.bg_uname, compound=LEFT,
+                              font=("Comic Sans MS", 22, "bold"), fg="#000000", bg="#2196F3")
         self.label_un.grid(row=0, column=0, padx=5, pady=5)
-        self.entry_un = Entry(self.frame_login, font=("arial", 18), textvariable=self.un)
+        self.entry_un = Entry(self.frame_login, font=("arial", 18), borderwidth=0, textvariable=self.un)
         self.entry_un.grid(row=0, column=1, padx=5, pady=5)
         self.entry_un.focus()
 
         # password
-        self.label_pw = Label(self.frame_login, text=" Password", image=self.bg_pass, compound=LEFT,
-                              font=("arial", 18, "bold"), fg="#000000", bg="sky blue")
+        self.label_pw = Label(self.frame_login, text=" PASSWORD", image=self.bg_pass, compound=LEFT,
+                              font=("Comic Sans MS", 22, "bold"), fg="#000000", bg="#2196F3")
         self.label_pw.grid(row=1, column=0, padx=5, pady=5)
-        self.entry_pw = Entry(self.frame_login, font=("arial", 18), textvariable=self.pw)
-        self.entry_pw.default_show_val = self.entry_pw["show"]
-        self.entry_pw["show"] = "*"
+        self.entry_pw = Entry(self.frame_login, font=("arial", 18), show='*', borderwidth=0, textvariable=self.pw)
         self.entry_pw.grid(row=1, column=1, padx=5, pady=5)
-
-        # checkbutton for password view
-        self.check = IntVar()
-        self.pa = Checkbutton(self.frame_login, bg="#ffffff", variable=self.check, command=self.show)
-        self.pa.place(x=400, y=55)
+        self.show_btn = Button(self.frame_login, width=32, bg="white", image=self.bg_show, activebackground="white",
+                               relief=FLAT, command=self.show_password)
+        self.show_btn.place(x=438, y=51, height=30)
 
         # login button
-        self.btn_login = Button(self.frame_login, text="Log In", width=20, font=("arial", 16, "bold"), bg="sky blue",
-                                activebackground="blue", command=self.on_login_click, image=self.bg_log, compound=LEFT)
+        self.btn_login = Button(self.frame_login, text="LOG IN", width=20, font=("Comic Sans MS", 20, "bold"),
+                                bg="#2196F3", activebackground="blue", command=self.on_login_click,
+                                image=self.bg_log, compound=LEFT)
         self.btn_login.grid(row=2, column=0, columnspan=2, sticky=W + E, padx=5, pady=5)
 
         # reset button
-        self.btn_reset = Button(self.frame_login, text="Reset", width=20, font=("arial", 16, "bold"), bg="sky blue",
-                                activebackground="yellow", command=self.on_reset_click, image=self.bg_reset,
-                                compound=LEFT)
+        self.btn_reset = Button(self.frame_login, text="RESET", width=20, font=("Comic Sans MS", 20, "bold"),
+                                bg="#2196F3", activebackground="yellow", command=self.on_reset_click,
+                                image=self.bg_reset, compound=LEFT)
         self.btn_reset.grid(row=3, column=0, sticky=W + E, padx=5, pady=5)
 
         # quit button
-        self.btn_exit = Button(self.frame_login, text="Exit", width=20, font=("arial", 16, "bold"), bg="sky blue",
-                               activebackground="red", command=self.exit_handler, image=self.bg_exit, compound=LEFT)
+        self.btn_exit = Button(self.frame_login, text="EXIT", width=20, font=("Comic Sans MS", 20, "bold"),
+                               bg="#2196F3", activebackground="red", command=self.exit_handler,
+                               image=self.bg_exit, compound=LEFT)
         self.btn_exit.grid(row=3, column=1, sticky=W + E, padx=5, pady=5)
 
         # disclaimer
-        self.title1 = Label(self.root, text="You are accessing the portal of ### Hotel Pvt. Ltd.\n "
-                                            "Any misuse will be against hotel law. And addressed as Federal crime.",
-                            font=("arial", 8, "bold"), fg="#000000", bg="sky blue")
+        self.title1 = Label(self.root, text="DEVELOPED BY DIPTAN REGMI",
+                            font=("Comic Sans MS", 10, "bold"), fg="navy blue", bg="#2196F3")
         self.title1.pack(side=BOTTOM)
 
         # separation line
-        self.line = Canvas(self.root, width=500, height=2, bg="#ffffff").pack(side=BOTTOM)
+        self.line = Canvas(self.root, width=550, height=2, bg="#ffffff").pack(side=BOTTOM)
 
     def on_login_click(self):
         """check for if input fields are empty or not then verify the user id and password
@@ -119,12 +119,15 @@ class Login:
         self.entry_un.delete(0, END)
         self.entry_pw.delete(0, END)
 
-    def show(self):
-        """shows the password if checkbutton is clicked"""
-        if self.check.get() == 0:
-            self.entry_pw["show"] = "*"
-        else:
+    def show_password(self):
+        """shows the password if eye icon is clicked"""
+        if not self.show_state:
             self.entry_pw["show"] = ""
+            self.show_btn['image'] = self.bg_hide
+        else:
+            self.entry_pw['show'] = "*"
+            self.show_btn['image'] = self.bg_show
+        self.show_state = not self.show_state
 
     def exit_handler(self):
         """quits the application"""
